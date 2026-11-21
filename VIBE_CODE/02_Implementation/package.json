@@ -1,0 +1,14 @@
+{
+  "name": "jira-test-plan-generator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-powered Jira Test Plan Generator (React + TypeScript frontend, Node.js + Express backend)",
+  "scripts": {
+    "install:all": "npm install --prefix src/backend && npm install --prefix src/frontend",
+    "build": "npm run build --prefix src/frontend",
+    "start": "npm start --prefix src/backend",
+    "dev:backend": "npm run dev --prefix src/backend",
+    "dev:frontend": "npm run dev --prefix src/frontend",
+    "test": "npm test --prefix src/backend"
+  }
+}
