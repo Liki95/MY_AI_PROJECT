@@ -5,5 +5,6 @@ dist/
 .env.*
 !.env.example
 src/backend/settings.local.json
+.vercel/
 .DS_Store
 Thumbs.db

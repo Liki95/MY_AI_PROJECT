@@ -141,11 +141,13 @@ export function validatePatch(body = {}) {
 export function updateSettings(body) {
   const patch = validatePatch(body);
   Object.assign(state, patch);
-  const toSave = Object.fromEntries(PERSISTABLE.map((k) => [k, state[k]]));
-  try {
-    fs.writeFileSync(LOCAL_SETTINGS_FILE, JSON.stringify(toSave, null, 2));
-  } catch {
-    console.warn('[config] Could not persist settings.local.json (non-secret settings kept in memory).');
+  if (!process.env.VERCEL) {
+    const toSave = Object.fromEntries(PERSISTABLE.map((k) => [k, state[k]]));
+    try {
+      fs.writeFileSync(LOCAL_SETTINGS_FILE, JSON.stringify(toSave, null, 2));
+    } catch {
+      console.warn('[config] Could not persist settings.local.json (non-secret settings kept in memory).');
+    }
   }
   return getPublicSettings();
 }

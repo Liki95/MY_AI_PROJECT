@@ -5,18 +5,23 @@ import { AppError, ErrorCodes } from './errors.js';
 import { chat } from './llm.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-// Planning assets live in VIBE_CODE/01_plan (authoritative template — read at runtime, never modified).
-const PLAN_DIR = process.env.PLAN_DIR ? path.resolve(process.env.PLAN_DIR) : path.resolve(__dirname, '..', '..', '..', '..', '01_plan');
-export const TEMPLATE_FILE = path.join(PLAN_DIR, 'TestPlan_Template.md');
+// Authoritative local template lives in VIBE_CODE/01_plan; a bundled copy in
+// src/backend/templates/ ensures serverless deployments (e.g. Vercel) can read it.
+const BUNDLED_TEMPLATE = fileURLToPath(new URL('../templates/TestPlan_Template.md', import.meta.url));
+const LOCAL_PLAN_TEMPLATE = path.resolve(__dirname, '..', '..', '..', '..', '01_plan', 'TestPlan_Template.md');
+export const TEMPLATE_FILE = process.env.PLAN_DIR
+  ? path.join(path.resolve(process.env.PLAN_DIR), 'TestPlan_Template.md')
+  : (fs.existsSync(LOCAL_PLAN_TEMPLATE) ? LOCAL_PLAN_TEMPLATE : BUNDLED_TEMPLATE);
 
 export const INSUFFICIENT = 'Insufficient information to determine.';
 export const INFERENCE = 'Inference (low confidence)';
 
 export function loadTemplate() {
-  if (!fs.existsSync(TEMPLATE_FILE)) {
-    throw new AppError(ErrorCodes.MISSING_CONFIG, `Test plan template not found at 01_plan/TestPlan_Template.md.`, 500);
+  const candidates = [TEMPLATE_FILE, BUNDLED_TEMPLATE];
+  for (const file of candidates) {
+    if (fs.existsSync(file)) return fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
   }
-  return fs.readFileSync(TEMPLATE_FILE, 'utf8').replace(/\r\n/g, '\n');
+  throw new AppError(ErrorCodes.MISSING_CONFIG, `Test plan template not found (checked 01_plan and bundled templates).`, 500);
 }
 
 /** Ordered list of "## " section headings defined by the template. */
