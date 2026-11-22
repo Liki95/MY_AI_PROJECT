@@ -1,0 +1,19 @@
+{
+  "name": "jira-test-strategy-generator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AI-powered Jira Test Strategy Generator (React + TypeScript frontend, Node.js + Express backend)",
+  "scripts": {
+    "install:all": "npm install && npm install --prefix src/backend && npm install --prefix src/frontend",
+    "build": "npm run build --prefix src/frontend",
+    "start": "npm start --prefix src/backend",
+    "dev:backend": "npm run dev --prefix src/backend",
+    "dev:frontend": "npm run dev --prefix src/frontend",
+    "test": "npm test --prefix src/backend"
+  },
+  "dependencies": {
+    "docx": "^9.16.0",
+    "express": "^4.21.2"
+  }
+}
